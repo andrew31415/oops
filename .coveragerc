@@ -1,0 +1,6 @@
+[run]
+source = .
+omit = 
+    htmlcov/*,
+    tests/*, 
+    __*

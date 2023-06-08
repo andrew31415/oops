@@ -14,11 +14,11 @@ class ListNode(object):
     element: [value, next]
     """
 
-    val: object = field(default=None)
+    val: int | float | str | None = field(default=None)
     # TODO: maybe raise if is not instance of same type
     # if next is not None and not isinstance(next, ListNode):
     #     raise TypeError(f"Element with {val=} doesn't have a valid next ")
-    next: ListNode = field(default=None, init=False)
+    next: ListNode | None = field(default=None, init=False)
 
 
 @dataclass
@@ -34,29 +34,31 @@ class SinglyLinkedList(object):
     element_4: [value, None]
     """
 
-    current: ListNode = field(default=None, init=False, repr=False)
-    init_val: any = field(default=None, init=True, repr=False)
     length: int = field(default=0, init=False, repr=False)
-    list_head: ListNode = field(default=None, init=False)
+    list_head: ListNode | None = field(default=None, init=False)
+
+    _current: ListNode | None = field(default=None, init=False, repr=False)
+    _init_val: int | float | str | None = field(
+        default=None, init=True, repr=False)
 
     def __post_init__(self) -> None:
-        match self.init_val:
+        match self._init_val:
             case int() | float() | str():
-                self.add_node(self.init_val)
+                self.add_node(self._init_val)
 
             case list() | set() | SinglyLinkedList():
-                for x in self.init_val:
+                for x in self._init_val:
                     self.add_node(x)
 
     def __iter__(self) -> SinglyLinkedList:
-        self.current = self.list_head
+        self._current = self.list_head
         return self
 
-    def __next__(self) -> ListNode:
-        if self.current is None:
+    def __next__(self) -> int | float | str | None:
+        if self._current is None:
             raise StopIteration
-        current = self.current.val
-        self.current = self.current.next
+        current = self._current.val
+        self._current = self._current.next
         return current
 
     # @property
@@ -69,36 +71,41 @@ class SinglyLinkedList(object):
     #         self.length = val
     #     else:
 
-    def add_node(self, node_new: any = None) -> None:
+    def add_node(self, node_new: int | float | str | None = None) -> None:
         node_to_add = ListNode(val=node_new)
+        # TODO: the below check method is_empty might be redundant. a check for list_head is None might be enough
         if self.is_empty():
             self.list_head, self.length = node_to_add, 1
         else:
             list_end = self.list_head
 
-            while list_end.next:
-                list_end = list_end.next
+            if list_end is not None:
+                while list_end.next is not None:
+                    list_end = list_end.next
 
-            list_end.next = node_to_add
-            self.length += 1
+                list_end.next = node_to_add
+                self.length += 1
 
-    def add_nodes(self, new_nodes: any = None) -> None:
+    def add_nodes(self, new_nodes: list | str | set | frozenset) -> None:
 
         # TODO: move this to add_nodes() and let it accept: lists, strings, sets, dicts, frozensets
         # case list():
         list_end = self.list_head
         try:
             for x in new_nodes:
+                # TODO: the below check method is_empty might be redundant.
+                # a check for list_head is None might be enough
                 if self.is_empty():
                     node_to_add = ListNode(val=x)
                     self.list_head, self.length = node_to_add, 1
-                    continue
-                while list_end.next:
-                    list_end = list_end.next
+                else:
+                    if list_end is not None:
+                        while list_end.next:
+                            list_end = list_end.next
 
-                node_to_add = ListNode(val=x)
-                list_end.next = node_to_add
-                self.length += 1
+                        node_to_add = ListNode(val=x)
+                        list_end.next = node_to_add
+                        self.length += 1
         except TypeError as exc:
             raise TypeError(
                 f"Variable given to add_nodes is not iterable: {new_nodes=}") from exc

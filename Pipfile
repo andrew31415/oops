@@ -7,6 +7,7 @@ name = "pypi"
 
 [dev-packages]
 flake8 = "==6.0.0"
+flake8-html = "*"
 mypy = "==1.0.1"
 pipenv = "==2023.2.18"
 pytest = "==7.2.2"
@@ -16,3 +17,9 @@ tox = "==4.4.6"
 
 [requires]
 python_version = "3.11"
+
+[scripts]
+typing = "mypy oops tests"
+style = "flake8 oops tests"
+tests = "pytest -v tests"
+coverage = "pytest --cov-report term --cov-report html --cov ."
