@@ -1,0 +1,9 @@
+[flake8]
+max-line-length = 120
+exclude = 
+    .venv
+    htmlcov/*,
+    tests/*, 
+    __*
+format = html
+htmldir = htmlflake8
