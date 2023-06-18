@@ -129,6 +129,16 @@ class TestSinglyLinkedList:
         with pytest.raises(ValueError):
             sll_simple[2.5]
 
+    # Check if can make a list from a non-iterable type
+    sll = lists.SinglyLinkedList(2)
+    assert sll.length == 1
+
+    # Check if `None` value can be inserted correctly
+    sll = lists.SinglyLinkedList()
+    assert sll.length == 0
+    sll.add_node(None)
+    assert sll.length == 1
+
 
 class TestStack:
     def test_create_and_push(self):

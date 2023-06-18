@@ -15,7 +15,7 @@ class ListNode(object):
     """
 
     val: int | float | str | None = field(default=None)
-    # TODO: maybe raise if is not instance of same type
+    # TODO: add setter for self.next that raises TypeError if object is not ListNone
     # if next is not None and not isinstance(next, ListNode):
     #     raise TypeError(f"Element with {val=} doesn't have a valid next ")
     next: ListNode | None = field(default=None, init=False)
@@ -61,20 +61,18 @@ class SinglyLinkedList(object):
         self._current = self._current.next
         return current
 
-    # @property
-    # def length(self) -> int:
-    #     return self.length
+    def add_node(self, value: int | float | str | None = None) -> None:
+        """Add a single ListNode object with a specific value to the end of the
+        SinglyLinkedList instance .
 
-    # @length.setter
-    # def length(self, val: int) -> None:
-    #     if isinstance(val, int) and val >= 0:
-    #         self.length = val
-    #     else:
+        Parameters
+        ----------
+        value : int | float | str | None, optional.
+            Value to be added, by default None.
+        """
+        node_to_add = ListNode(val=value)
 
-    def add_node(self, node_new: int | float | str | None = None) -> None:
-        node_to_add = ListNode(val=node_new)
-        # TODO: the below check method is_empty might be redundant. a check for list_head is None might be enough
-        if self.is_empty():
+        if self.list_head is None:
             self.list_head, self.length = node_to_add, 1
         else:
             list_end = self.list_head
@@ -86,18 +84,22 @@ class SinglyLinkedList(object):
                 list_end.next = node_to_add
                 self.length += 1
 
-    def add_nodes(self, new_nodes: list | str | set | frozenset) -> None:
+    def add_nodes(self, iterable: list | str | set | frozenset) -> None:
+        """Add multiple ListNode objects with values read from an interable to
+        the end of the SinglyLinkedList instance .
 
-        # TODO: move this to add_nodes() and let it accept: lists, strings, sets, dicts, frozensets
-        # case list():
+        Parameters
+        ----------
+        iterable : int | float | str | None, optional.
+            Value to be added, by default None.
+        """
         list_end = self.list_head
         try:
-            for x in new_nodes:
-                # TODO: the below check method is_empty might be redundant.
-                # a check for list_head is None might be enough
-                if self.is_empty():
+            for x in iterable:
+                if self.list_head is None:
                     node_to_add = ListNode(val=x)
                     self.list_head, self.length = node_to_add, 1
+                    list_end = self.list_head
                 else:
                     if list_end is not None:
                         while list_end.next:
@@ -108,31 +110,4 @@ class SinglyLinkedList(object):
                         self.length += 1
         except TypeError as exc:
             raise TypeError(
-                f"Variable given to add_nodes is not iterable: {new_nodes=}") from exc
-
-    def is_empty(self):
-        return self.length == 0 and self.list_head is None
-
-
-# test_list = SinglyLinkedList([1, 2, 3])
-# print(test_list)
-# print(test_list.length)
-
-# test_list.add_node("new_element")
-# print(test_list)
-# print(test_list.length)
-
-# test_list.add_node("new_element2")
-# print(test_list)
-# print(test_list.length)
-
-# test_list.add_nodes([4, 5, 6])
-# print(test_list)
-# print(test_list.length)
-
-# test_list.add_node('test')
-# print(test_list)
-# print(test_list.length)
-
-# for x in test_list:
-#     print(x)
+                f"Variable given to add_nodes is not iterable: {iterable=}") from exc
