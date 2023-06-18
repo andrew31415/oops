@@ -16,10 +16,10 @@ pytest-html = "==3.2.0"
 tox = "==4.4.6"
 
 [requires]
-python_version = "3.11"
+python_version = "3"
 
 [scripts]
-typing = "mypy oops tests"
-style = "flake8 oops tests"
+typing = "mypy src tests"
+style = "flake8 src tests"
 tests = "pytest -v tests"
-coverage = "pytest --cov-report term --cov-report html --cov ."
+coverage = "pytest --cov-report term --cov-report html --cov src"
