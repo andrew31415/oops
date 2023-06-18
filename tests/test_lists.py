@@ -40,12 +40,22 @@ def test_can_add_node_to_sll():
     sll.add_node("new_element")
     assert sll.length == 1
 
-    sll.add_node("new_element")
+    sll.add_node(frozenset([1, 2, 3, 1, 2, 3]))
     assert sll.length == 2
 
     # Add an element with val=[1,2,3]
     sll.add_node([1, 2, 3])
     assert sll.length == 3
+
+    # Check if can make a list from a non-iterable type
+    sll = lists.SinglyLinkedList(2)
+    assert sll.length == 1
+
+    # Check if `None` value can be inserted correctly
+    sll = lists.SinglyLinkedList()
+    assert sll.length == 0
+    sll.add_node(None)
+    assert sll.length == 1
 
 
 def test_can_add_multiple_nodes_to_sll(sll_simple, sll_complex):
@@ -62,6 +72,9 @@ def test_can_add_multiple_nodes_to_sll(sll_simple, sll_complex):
     sll_simple.add_nodes(sll_complex)
     assert sll_simple.length == (
         SLL_SIMPLE_LIST_LEN + 3 + 4 + SLL_COMPLEX_LIST_LEN)
+    sll = lists.SinglyLinkedList()
+    sll.add_nodes("haha")
+    assert sll.length == 4
 
 
 def test_can_create_new_sll_from_different_types(sll_simple):
