@@ -98,6 +98,7 @@ def test_iterable_sll(sll_simple):
     assert next(sll_iter) == lists.ListNode(val=3, next=lists.ListNode(val=1))
     assert next(sll_iter) == lists.ListNode(val=1)
 
+
     with pytest.raises(StopIteration):
         assert next(sll_iter)
 
@@ -129,3 +130,4 @@ def test_sll_getitem_function(sll_simple):
         sll_simple[-10]
     with pytest.raises(ValueError):
         sll_simple[2.5]
+
