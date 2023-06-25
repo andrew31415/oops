@@ -92,10 +92,11 @@ def test_iterable_sll(sll_simple):
     """Check if the SLL is interable
     """
     sll_iter = iter(sll_simple)
-    assert next(sll_iter) == SLL_SIMPLE_LIST[0]
-    assert next(sll_iter) == SLL_SIMPLE_LIST[1]
-    assert next(sll_iter) == SLL_SIMPLE_LIST[2]
-    assert next(sll_iter) == SLL_SIMPLE_LIST[3]
+    assert next(sll_iter) == lists.ListNode(val=1, next=lists.ListNode(
+        val=2, next=lists.ListNode(val=3, next=lists.ListNode(val=1))))
+    assert next(sll_iter) == lists.ListNode(val=2, next=lists.ListNode(val=3, next=lists.ListNode(val=1)))
+    assert next(sll_iter) == lists.ListNode(val=3, next=lists.ListNode(val=1))
+    assert next(sll_iter) == lists.ListNode(val=1)
 
     with pytest.raises(StopIteration):
         assert next(sll_iter)
@@ -108,3 +109,23 @@ def test_can_raise_errors(sll_simple):
     # sll = lists.SinglyLinkedList()
     # with pytest.raises(ValueError):
     #     sll.length = -10
+
+
+def test_sll_len_function(sll_simple, sll_complex):
+    assert len(sll_simple) == 4
+    assert len(sll_complex) == 3
+
+
+def test_sll_getitem_function(sll_simple):
+    assert sll_simple[0] == lists.ListNode(val=1, next=lists.ListNode(
+        val=2, next=lists.ListNode(val=3, next=lists.ListNode(val=1))))
+    assert sll_simple[1] == lists.ListNode(val=2, next=lists.ListNode(val=3, next=lists.ListNode(val=1)))
+    assert sll_simple[2] == lists.ListNode(val=3, next=lists.ListNode(val=1))
+    assert sll_simple[3] == lists.ListNode(val=1)
+
+    with pytest.raises(IndexError):
+        sll_simple[4]
+    with pytest.raises(ValueError):
+        sll_simple[-10]
+    with pytest.raises(ValueError):
+        sll_simple[2.5]
