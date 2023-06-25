@@ -53,6 +53,13 @@ class SinglyLinkedList(object):
         self.length = len(self)
 
     def __len__(self) -> int:
+        """Get the length of the SinglyLinkedList instance.
+
+        Returns
+        -------
+        int
+            How many ListNodes this list contains.
+        """
         length = 0
         node_parser = self.list_head
         while node_parser:
@@ -60,7 +67,26 @@ class SinglyLinkedList(object):
             node_parser = node_parser.next
         return length
 
-    def __getitem__(self, integer) -> ListNode | None:
+    def __getitem__(self, integer: int) -> ListNode | None:
+        """Get the element from the list from the position `integer`.
+
+        Parameters
+        ----------
+        integer : int
+            Position of searched element.
+
+        Returns
+        -------
+        ListNode | None
+            Element from position `integer`.
+
+        Raises
+        ------
+        IndexError
+            If the `integer` index is out of bounds.
+        ValueError
+            If an illegal `integer` index is given.
+        """
         sll_length = len(self) - 1
 
         if integer > sll_length:
@@ -101,7 +127,7 @@ class SinglyLinkedList(object):
 
     def add_nodes(self, iterable: list | str | set | frozenset) -> None:
         """Add multiple ListNode objects with values read from an interable to
-        the end of the SinglyLinkedList instance .
+        the end of the SinglyLinkedList instance.
 
         Parameters
         ----------
