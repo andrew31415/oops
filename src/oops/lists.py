@@ -18,7 +18,7 @@ class ListNode(object):
     # TODO: add setter for self.next that raises TypeError if object is not ListNone
     # if next is not None and not isinstance(next, ListNode):
     #     raise TypeError(f"Element with {val=} doesn't have a valid next ")
-    next: ListNode | None = field(default=None, init=False)
+    next: ListNode | None = field(default=None)
 
 
 @dataclass
@@ -50,16 +50,31 @@ class SinglyLinkedList(object):
                 for x in self._init_val:
                     self.add_node(x)
 
-    def __iter__(self) -> SinglyLinkedList:
-        self._current = self.list_head
-        return self
+        self.length = len(self)
 
-    def __next__(self) -> int | float | str | None:
-        if self._current is None:
-            raise StopIteration
-        current = self._current.val
-        self._current = self._current.next
-        return current
+    def __len__(self) -> int:
+        length = 0
+        node_parser = self.list_head
+        while node_parser:
+            length += 1
+            node_parser = node_parser.next
+        return length
+
+    def __getitem__(self, integer) -> ListNode | None:
+        sll_length = len(self) - 1
+
+        if integer > sll_length:
+            raise IndexError('SinglyLinkedList: list index out of range.')
+        if integer < 0 or not type(integer) is int:
+            raise ValueError('SinglyLinkedList: list index must be positive integer.')
+
+        node_parser = self.list_head
+
+        while integer != 0 and node_parser is not None:
+            node_parser = node_parser.next
+            integer -= 1
+
+        return node_parser
 
     def add_node(self, value: int | float | str | None = None) -> None:
         """Add a single ListNode object with a specific value to the end of the
