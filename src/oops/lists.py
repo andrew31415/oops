@@ -1,20 +1,18 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from copy import deepcopy
+from dataclasses import dataclass
+from dataclasses import field
+from typing import Any
 
 
 @dataclass
 class ListNode(object):
-    """An object containing a value and an identifier to another object of the
-    same ListNode type.
-
-    Notes
-    -----
-
-    element: [value, next]
+    """An object containing a value (type: Any) and a reference to another
+    ListNode type.
     """
 
-    val: int | float | str | None = field(default=None)
+    val: Any = field(default=None)
     # TODO: add setter for self.next that raises TypeError if object is not ListNone
     # if next is not None and not isinstance(next, ListNode):
     #     raise TypeError(f"Element with {val=} doesn't have a valid next ")
@@ -34,41 +32,33 @@ class SinglyLinkedList(object):
     element_4: [value, None]
     """
 
-    length: int = field(default=0, init=False, repr=False)
-    list_head: ListNode | None = field(default=None, init=False)
-
-    _current: ListNode | None = field(default=None, init=False, repr=False)
-    _init_val: int | float | str | None = field(
-        default=None, init=True, repr=False)
+    _size: int = field(default=0, init=False, repr=False)
+    """List size."""
+    _head: ListNode | None = field(default=None, init=True)
+    """List head node."""
 
     def __post_init__(self) -> None:
-        match self._init_val:
+        match self._head:
             case int() | float() | str():
-                self.add_node(self._init_val)
+                self.add(self._head)
 
-            case list() | set() | SinglyLinkedList():
-                for x in self._init_val:
-                    self.add_node(x)
-
-        self.length = len(self)
+            case list() | set() | frozenset() | SinglyLinkedList():
+                for x in self._head:
+                    self.add(x)
 
     def __len__(self) -> int:
-        """Get the length of the SinglyLinkedList instance.
+        """Get the list's size.
 
         Returns
         -------
         int
-            How many ListNodes this list contains.
+            How many `ListNode` elements this list contains.
         """
-        length = 0
-        node_parser = self.list_head
-        while node_parser:
-            length += 1
-            node_parser = node_parser.next
-        return length
+        return self._size
 
     def __getitem__(self, integer: int) -> ListNode | None:
-        """Get the element from the list from the position `integer`.
+        """Get the element from the SinglyLinkedList from the specified
+        `integer` position.
 
         Parameters
         ----------
@@ -94,7 +84,7 @@ class SinglyLinkedList(object):
         if integer < 0 or not type(integer) is int:
             raise ValueError('SinglyLinkedList: list index must be positive integer.')
 
-        node_parser = self.list_head
+        node_parser = self._head
 
         while integer != 0 and node_parser is not None:
             node_parser = node_parser.next
@@ -102,53 +92,110 @@ class SinglyLinkedList(object):
 
         return node_parser
 
-    def add_node(self, value: int | float | str | None = None) -> None:
-        """Add a single ListNode object with a specific value to the end of the
-        SinglyLinkedList instance .
+    def is_empty(self) -> bool:
+        """Return True if SinglyLinkedList is empty."""
+        return len(self) == 0
+
+    def add(self, value: Any = None, iterable: bool = False) -> None:
+        """Add ListNode object(s) with a specific `value` to the end of the
+        SinglyLinkedList.
 
         Parameters
         ----------
-        value : int | float | str | None, optional.
+        value : Any | None, optional.
             Value to be added, by default None.
+        iterable : bool, optional.
+            Iterate over `value` and add individual nodes, by default False.
         """
-        node_to_add = ListNode(val=value)
+        if not iterable:
+            node_to_add = ListNode(val=value)
 
-        if self.list_head is None:
-            self.list_head, self.length = node_to_add, 1
+            if self.is_empty():
+                self._head, self._size = node_to_add, 1
+            else:
+                list_end = self._head
+
+                if list_end is not None:
+                    while list_end.next is not None:
+                        list_end = list_end.next
+
+                    list_end.next = node_to_add
+                    self._size += 1
         else:
-            list_end = self.list_head
+            try:
+                for x in value:
+                    self.add(x)
+            except TypeError as exc:
+                raise TypeError(
+                    f"Variable given to add_nodes is not iterable: {value=}") from exc
 
-            if list_end is not None:
-                while list_end.next is not None:
-                    list_end = list_end.next
 
-                list_end.next = node_to_add
-                self.length += 1
+@dataclass
+class SinglyLinkedStack(object):
 
-    def add_nodes(self, iterable: list | str | set | frozenset) -> None:
-        """Add multiple ListNode objects with values read from an interable to
-        the end of the SinglyLinkedList instance.
+    _size: int = field(default=0, init=False, repr=False)
+    """Stack size."""
+    _head: Any = field(default=None, init=True)
+    """Stack head."""
+
+    def __post_init__(self):
+        init_value = deepcopy(self._head)
+        self._head = None
+        match init_value:
+            case int() | float() | str():
+                self.push(init_value)
+
+            case list() | set() | frozenset() | SinglyLinkedList():
+                for x in init_value:
+                    self.push(x)
+
+    def __len__(self) -> int:
+        """Return the stack's size."""
+        return self._size
+
+    def is_empty(self) -> bool:
+        """Return True if stack is empty."""
+        return self._size == 0
+
+    def push(self, value: Any = None, iterable: bool = False) -> None:
+        """Add a single ListNode object with a specific value to the stack.
 
         Parameters
         ----------
-        iterable : int | float | str | None, optional.
+        value : Any, optional.
             Value to be added, by default None.
+        iterable : bool, optional.
+            Iterate over `value` and push individual nodes, by default False.
         """
-        list_end = self.list_head
-        try:
-            for x in iterable:
-                if self.list_head is None:
-                    node_to_add = ListNode(val=x)
-                    self.list_head, self.length = node_to_add, 1
-                    list_end = self.list_head
-                else:
-                    if list_end is not None:
-                        while list_end.next:
-                            list_end = list_end.next
+        if not iterable:
+            node_to_add = ListNode(val=value, next=self._head)
+            self._head = node_to_add
+            self._size += 1
+        else:
+            try:
+                for x in value:
+                    self.push(x)
+            except TypeError as exc:
+                raise TypeError(
+                    f"Object given to push is not iterable: {value=}") from exc
 
-                        node_to_add = ListNode(val=x)
-                        list_end.next = node_to_add
-                        self.length += 1
-        except TypeError as exc:
-            raise TypeError(
-                f"Variable given to add_nodes is not iterable: {iterable=}") from exc
+    def pop(self) -> Any:
+        """Remove and return the element from the top of the stack.
+
+        Raises
+        ------
+        IndexError
+            If the stack is empty
+        """
+
+        if self.is_empty():
+            raise IndexError('Stack is empty.')
+        val = self._head.val
+        self._head = self._head.next
+        self._size -= 1
+        return val
+
+    def top(self) -> Any:
+        if self.is_empty():
+            raise IndexError('Stack is empty.')
+        return self._head.val
