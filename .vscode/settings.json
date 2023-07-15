@@ -7,6 +7,14 @@
     "python.testing.pytestArgs": [
         "${workspaceFolder}\\tests"
     ],
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "-v",
+        "--cov=myproj/",
+        "--cov-report=xml",
+        "--pdb",
+        "tests/",
+        "--no-cov"
+    ]
     
 }
