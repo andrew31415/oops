@@ -186,7 +186,7 @@ class TestSinglyLinkedList:
 
     def test_raise_errors(self, sll_simple):
         with pytest.raises(TypeError):
-            sll_simple.add(10, iterable=True)
+            sll_simple.add(1, iterable=True)
 
         # sll = lists.SinglyLinkedList()
         # with pytest.raises(ValueError):
