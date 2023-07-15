@@ -37,11 +37,11 @@ class TestSinglyLinkedList:
         sll = lists.SinglyLinkedList()
         assert len(sll) == 0
         assert len(sll) == 0
-        assert repr(sll) == "SinglyLinkedList(_head=None)"
-        assert str(sll) == "SinglyLinkedList(_head=None)"
+        assert repr(sll) == 'SinglyLinkedList(_head=None)'
+        assert str(sll) == 'SinglyLinkedList(_head=None)'
 
         # Add a string element
-        sll.add("new_element")
+        sll.add('new_element')
         assert len(sll) == 1
 
         # Add a frozenset element
@@ -77,7 +77,7 @@ class TestSinglyLinkedList:
         assert sll_simple._size == (
             SIMPLE_LIST_LEN + 3 + 4 + COMPLEX_LIST_LEN)
         sll = lists.SinglyLinkedList()
-        sll.add("haha", iterable=True)
+        sll.add('haha', iterable=True)
         assert len(sll) == 4
 
     def test_can_create_new_sll_from_different_types(self, sll_simple):
@@ -134,12 +134,13 @@ class TestStack:
     def test_create_and_push(self):
         stack = lists.SinglyLinkedStack()
         assert stack.is_empty() is True
-        assert repr(stack) == "SinglyLinkedStack(_head=None)"
-        assert str(stack) == "SinglyLinkedStack(_head=None)"
+        assert repr(stack) == 'SinglyLinkedStack(_head=None)'
+        assert str(stack) == 'SinglyLinkedStack(_head=None)'
 
         # Push a string element
-        stack.push("new_element")
+        stack.push('new_element')
         assert len(stack) == 1
+        assert stack.is_empty() is False
 
         # Push a frozenset element
         stack.push(frozenset([1, 2, 3, 1, 2, 3]))
@@ -178,3 +179,56 @@ class TestStack:
             stack.pop()
         with pytest.raises(IndexError):
             stack.top()
+
+
+class TestQueue:
+
+    def test_create(self):
+        queue = lists.Queue()
+        assert queue.is_empty() is True
+        assert repr(queue) == 'Queue(_head=None)'
+        assert str(queue) == 'Queue(_head=None)'
+
+        queue = lists.Queue(2)
+        assert len(queue) == 1
+        assert queue.is_empty() is False
+
+        queue = lists.Queue([1, 2, 3])
+        assert len(queue) == 3
+        assert queue.is_empty() is False
+        assert queue.first() == 1
+        assert queue.last() == 3
+
+    def test_enqueue(self):
+        queue = lists.Queue()
+
+        # Enqueue a string element
+        queue.enqueue('new_element')
+        assert len(queue) == 1
+        assert queue.is_empty() is False
+
+        # Push a frozenset element
+        queue.enqueue(frozenset([1, 2, 3, 1, 2, 3]))
+        assert len(queue) == 2
+
+        # Push an element with val=[1,2,3]
+        queue.enqueue([1, 2, 3], iterable=True)
+        assert len(queue) == 5
+
+    def test_dequeue(self):
+        queue = lists.Queue([1, 2, 3])
+
+        assert queue.dequeue() == 1
+        assert queue.dequeue() == 2
+        assert queue.dequeue() == 3
+        with pytest.raises(IndexError):
+            assert queue.dequeue()
+
+    def test_raise_errors(self):
+        queue = lists.Queue()
+        with pytest.raises(IndexError):
+            queue.first()
+        with pytest.raises(IndexError):
+            queue.last()
+        with pytest.raises(TypeError):
+            queue.enqueue(10, iterable=True)

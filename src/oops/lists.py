@@ -20,7 +20,7 @@ class ListNode(object):
 
 
 @dataclass
-class SinglyLinkedList(object):
+class SinglyLinkedList:
     """Contains a singly linked list of ListNode type elements.
 
     Notes
@@ -106,6 +106,11 @@ class SinglyLinkedList(object):
             Value to be added, by default None.
         iterable : bool, optional.
             Iterate over `value` and add individual nodes, by default False.
+
+        Raises
+        ------
+        TypeError
+            If iterable is True and value is not iterable.
         """
         if not iterable:
             node_to_add = ListNode(val=value)
@@ -131,7 +136,7 @@ class SinglyLinkedList(object):
 
 
 @dataclass
-class SinglyLinkedStack(object):
+class SinglyLinkedStack:
 
     _size: int = field(default=0, init=False, repr=False)
     """Stack size."""
@@ -158,7 +163,7 @@ class SinglyLinkedStack(object):
         return self._size == 0
 
     def push(self, value: Any = None, iterable: bool = False) -> None:
-        """Add a single ListNode object with a specific value to the stack.
+        """Push `ListNode` object(s) in the stack.
 
         Parameters
         ----------
@@ -166,6 +171,11 @@ class SinglyLinkedStack(object):
             Value to be added, by default None.
         iterable : bool, optional.
             Iterate over `value` and push individual nodes, by default False.
+
+        Raises
+        ------
+        TypeError
+            If iterable is True and value is not iterable.
         """
         if not iterable:
             node_to_add = ListNode(val=value, next=self._head)
@@ -180,7 +190,7 @@ class SinglyLinkedStack(object):
                     f"Object given to push is not iterable: {value=}") from exc
 
     def pop(self) -> Any:
-        """Remove and return the element from the top of the stack.
+        """Pop (remove and return) the element from the top of the stack.
 
         Raises
         ------
@@ -199,3 +209,88 @@ class SinglyLinkedStack(object):
         if self.is_empty():
             raise IndexError('Stack is empty.')
         return self._head.val
+
+
+@dataclass
+class Queue:
+    _size: int = field(default=0, init=False, repr=False)
+    """Queue size."""
+    _head: Any = field(default=None, init=True)
+    """Queue head."""
+    _tail: Any = field(default=None, init=False, repr=False)
+    """Queue tail."""
+
+    def __post_init__(self):
+        init_value = deepcopy(self._head)
+        self._head = None
+        match init_value:
+            case int() | float() | str():
+                self.enqueue(init_value)
+
+            case list() | set() | frozenset() | SinglyLinkedList():
+                for x in init_value:
+                    self.enqueue(x)
+
+    def __len__(self) -> int:
+        """Return the stack's size."""
+        return self._size
+
+    def is_empty(self) -> bool:
+        """Return True if stack is empty."""
+        return self._size == 0
+
+    def first(self) -> Any:
+        """Get the element at the front of the queue."""
+        if self.is_empty():
+            raise IndexError('Queue is empty.')
+        return self._head.val
+
+    def last(self) -> Any:
+        """Get the element at the end of the queue."""
+        if self.is_empty():
+            raise IndexError('Queue is empty.')
+        return self._tail.val
+
+    def enqueue(self, value: Any = None, iterable: bool = False) -> None:
+        """Add ListNone object(s) to the end of the queue.
+
+        Parameters
+        ----------
+        value : Any, optional
+            Value to be added, by default None
+        iterable : bool, optional
+            Iterate over `value` and add individual nodes, by default False.
+
+        Raises
+        ------
+        TypeError
+            If iterable is True and value is not iterable.
+        """
+        if not iterable:
+            node_to_add = ListNode(val=value, next=None)
+            if self.is_empty():
+                self._head = node_to_add
+            else:
+                self._tail.next = node_to_add
+            self._tail = node_to_add
+            self._size += 1
+        else:
+            try:
+                for x in value:
+                    self.enqueue(x)
+            except TypeError as exc:
+                # TODO: make this a decorator? "value_type_checker"
+                raise TypeError(
+                    f"Object given to push is not iterable: {value=}") from exc
+
+    def dequeue(self) -> Any:
+        """Remove and return the element at the front of the queue."""
+        if self.is_empty():
+            raise IndexError('Queue is empty.')
+
+        val = self._head.val
+        self._head = self._head.next
+        self._size -= 1
+        if self.is_empty():
+            self._tail = None
+        return val
