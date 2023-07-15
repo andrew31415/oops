@@ -105,7 +105,7 @@ class TestSinglyLinkedList:
 
     def test_raise_errors(self, sll_simple):
         with pytest.raises(TypeError):
-            sll_simple.add(10, iterable=True)
+            sll_simple.add(1, iterable=True)
 
         # sll = lists.SinglyLinkedList()
         # with pytest.raises(ValueError):
@@ -166,7 +166,7 @@ class TestStack:
     def test_raise_errors(self):
         stack = lists.SinglyLinkedStack([1, 2, 3])
         with pytest.raises(TypeError):
-            stack.push(10, iterable=True)
+            stack.push(1, iterable=True)
 
     def test_pop_and_top(self):
         stack = lists.SinglyLinkedStack([1, 2, 3])
@@ -231,4 +231,56 @@ class TestQueue:
         with pytest.raises(IndexError):
             queue.last()
         with pytest.raises(TypeError):
-            queue.enqueue(10, iterable=True)
+            queue.enqueue(1, iterable=True)
+
+
+class TestCircularyLinkedList:
+    def test_create(self):
+        circulary = lists.CircularlyLinkedList()
+        assert circulary.is_empty() is True
+        assert repr(circulary) == 'CircularlyLinkedList(_tail=None)'
+        assert str(circulary) == 'CircularlyLinkedList(_tail=None)'
+
+        circulary = lists.CircularlyLinkedList(2)
+        assert len(circulary) == 1
+        assert circulary.is_empty() is False
+
+        circulary = lists.CircularlyLinkedList([1, 2, 3])
+        assert len(circulary) == 3
+        assert circulary.is_empty() is False
+        assert circulary.first() == 1
+        assert circulary.last() == 3
+
+    def test_enqueue(self):
+        circulary = lists.CircularlyLinkedList()
+
+        # Enqueue a string element
+        circulary.enqueue('new_element')
+        assert len(circulary) == 1
+        assert circulary.is_empty() is False
+
+        # Push a frozenset element
+        circulary.enqueue(frozenset([1, 2, 3, 1, 2, 3]))
+        assert len(circulary) == 2
+
+        # Push an element with val=[1,2,3]
+        circulary.enqueue([1, 2, 3], iterable=True)
+        assert len(circulary) == 5
+
+    def test_dequeue(self):
+        circulary = lists.CircularlyLinkedList([1, 2, 3])
+
+        assert circulary.dequeue() == 1
+        assert circulary.dequeue() == 2
+        assert circulary.dequeue() == 3
+        with pytest.raises(IndexError):
+            assert circulary.dequeue()
+
+    def test_raise_errors(self):
+        queue = lists.CircularlyLinkedList()
+        with pytest.raises(IndexError):
+            queue.first()
+        with pytest.raises(IndexError):
+            queue.last()
+        with pytest.raises(TypeError):
+            queue.enqueue(1, iterable=True)

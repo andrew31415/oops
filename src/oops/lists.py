@@ -136,10 +136,22 @@ class SinglyLinkedList:
 
 
 @dataclass
-class SinglyLinkedStack:
-
+class SinglyLinkedBase:
     _size: int = field(default=0, init=False, repr=False)
-    """Stack size."""
+    """Number of contained `ListNode`s."""
+
+    def __len__(self) -> int:
+        """Return the stack's size."""
+        return self._size
+
+    def is_empty(self) -> bool:
+        """Return True if stack is empty."""
+        return self._size == 0
+
+
+@dataclass
+class SinglyLinkedStack(SinglyLinkedBase):
+    """ADT implementation of a Stack."""
     _head: Any = field(default=None, init=True)
     """Stack head."""
 
@@ -154,13 +166,11 @@ class SinglyLinkedStack:
                 for x in init_value:
                     self.push(x)
 
-    def __len__(self) -> int:
-        """Return the stack's size."""
-        return self._size
-
-    def is_empty(self) -> bool:
-        """Return True if stack is empty."""
-        return self._size == 0
+    def top(self) -> Any:
+        """Get the element at the top of the stack."""
+        if self.is_empty():
+            raise IndexError('Stack is empty.')
+        return self._head.val
 
     def push(self, value: Any = None, iterable: bool = False) -> None:
         """Push `ListNode` object(s) in the stack.
@@ -205,16 +215,10 @@ class SinglyLinkedStack:
         self._size -= 1
         return val
 
-    def top(self) -> Any:
-        if self.is_empty():
-            raise IndexError('Stack is empty.')
-        return self._head.val
-
 
 @dataclass
-class Queue:
-    _size: int = field(default=0, init=False, repr=False)
-    """Queue size."""
+class Queue(SinglyLinkedBase):
+    """ADT implementation of a Queue."""
     _head: Any = field(default=None, init=True)
     """Queue head."""
     _tail: Any = field(default=None, init=False, repr=False)
@@ -231,14 +235,6 @@ class Queue:
                 for x in init_value:
                     self.enqueue(x)
 
-    def __len__(self) -> int:
-        """Return the stack's size."""
-        return self._size
-
-    def is_empty(self) -> bool:
-        """Return True if stack is empty."""
-        return self._size == 0
-
     def first(self) -> Any:
         """Get the element at the front of the queue."""
         if self.is_empty():
@@ -252,12 +248,12 @@ class Queue:
         return self._tail.val
 
     def enqueue(self, value: Any = None, iterable: bool = False) -> None:
-        """Add ListNone object(s) to the end of the queue.
+        """Add object(s) to the end of the queue.
 
         Parameters
         ----------
         value : Any, optional
-            Value to be added, by default None
+            Value to be added, by default None.
         iterable : bool, optional
             Iterate over `value` and add individual nodes, by default False.
 
@@ -294,3 +290,79 @@ class Queue:
         if self.is_empty():
             self._tail = None
         return val
+
+
+@dataclass
+class CircularlyLinkedList(SinglyLinkedBase):
+    """ADT implementation of a Circulary Linked List."""
+    _tail: Any = field(default=None, init=True)
+    """Queue tail."""
+
+    def __post_init__(self):
+        init_value = deepcopy(self._tail)
+        self._tail = None
+        match init_value:
+            case int() | float() | str():
+                self.enqueue(init_value)
+
+            case list() | set() | frozenset() | SinglyLinkedList():
+                for x in init_value:
+                    self.enqueue(x)
+
+    def first(self) -> Any:
+        """Get the element at the front of the queue."""
+        if self.is_empty():
+            raise IndexError('Queue is empty.')
+        return self._tail.next.val
+
+    def last(self) -> Any:
+        """Get the element at the end of the queue."""
+        if self.is_empty():
+            raise IndexError('Queue is empty.')
+        return self._tail.val
+
+    def enqueue(self, value: Any = None, iterable: bool = False) -> None:
+        """Add object(s) to the end of the queue.
+
+        Parameters
+        ----------
+        value : Any, optional
+            Value to be added, by default None.
+        iterable : bool, optional
+            Iterate over `value` and add individual nodes, by default False.
+
+        Raises
+        ------
+        TypeError
+            If iterable is True and value is not iterable.
+        """
+        if not iterable:
+            node_to_add = ListNode(val=value, next=None)
+            if self.is_empty():
+                node_to_add.next = node_to_add
+            else:
+                node_to_add.next = self._tail.next
+                self._tail.next = node_to_add
+            self._tail = node_to_add
+            self._size += 1
+        else:
+            try:
+                for x in value:
+                    self.enqueue(x)
+            except TypeError as exc:
+                # TODO: make this a decorator? "value_type_checker"
+                raise TypeError(
+                    f"Object given to push is not iterable: {value=}") from exc
+
+    def dequeue(self) -> Any:
+        """Remove and return the element at the front of the queue."""
+        if self.is_empty():
+            raise IndexError('Queue is empty.')
+
+        head = self._tail.next
+        if self._size == 1:
+            self._tail = None
+        else:
+            self._tail.next = head.next
+        self._size -= 1
+        return head.val
