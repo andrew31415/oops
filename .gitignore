@@ -1,5 +1,6 @@
 .coverage
 .venv
+.tox
 
 .tox
 *.pyc
