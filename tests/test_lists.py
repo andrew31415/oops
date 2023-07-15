@@ -158,7 +158,7 @@ class TestSinglyLinkedList:
         assert sll_simple._size == (
             SIMPLE_LIST_LEN + 3 + 4 + COMPLEX_LIST_LEN)
         sll = lists.SinglyLinkedList()
-        sll.add("haha", iterable=True)
+        sll.add('haha', iterable=True)
         assert len(sll) == 4
 
     def test_can_create_new_sll_from_different_types(self, sll_simple):
