@@ -9,11 +9,11 @@
     ],
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
-        "-v",
-        "--cov=myproj/",
-        "--cov-report=xml",
-        "--pdb",
-        "tests/",
+        // "-v",
+        // "--cov=myproj/",
+        // "--cov-report=xml",
+        // "--pdb",
+        // "tests/",
         "--no-cov"
     ]
     
