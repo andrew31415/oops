@@ -3,6 +3,7 @@ name: Tagger
 on:
   schedule:
     - cron: '*/10 * * * *' # At 23:00 on Sunday
+  workflow_dispatch:
 
 jobs:
   create-tag:
