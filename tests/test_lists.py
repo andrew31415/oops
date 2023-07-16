@@ -36,12 +36,12 @@ class TestSinglyLinkedList:
         """
         sll = lists.SinglyLinkedList()
         assert len(sll) == 0
-        assert len(sll) == 0
-        assert repr(sll) == 'SinglyLinkedList(_head=None)'
-        assert str(sll) == 'SinglyLinkedList(_head=None)'
+        assert repr(sll) == 'SinglyLinkedList(_head=ListNode(val=None, next=None))'
+        assert str(sll) == 'SinglyLinkedList()'
 
         # Add a string element
         sll.add('new_element')
+        assert str(sll) == "SinglyLinkedList(_head=ListNode(val='new_element', next=None))"
         assert len(sll) == 1
 
         # Add a frozenset element
@@ -67,17 +67,17 @@ class TestSinglyLinkedList:
         """
         assert sll_simple._size == SIMPLE_LIST_LEN
 
-        sll_simple.add([5, 6, 7], iterable=True)
+        sll_simple.add([5, 6, 7], iterate=True)
         assert sll_simple._size == (SIMPLE_LIST_LEN + 3)
 
-        sll_simple.add('test', iterable=True)
+        sll_simple.add('test', iterate=True)
         assert sll_simple._size == (SIMPLE_LIST_LEN + 3 + 4)
 
-        sll_simple.add(sll_complex, iterable=True)
+        sll_simple.add(sll_complex, iterate=True)
         assert sll_simple._size == (
             SIMPLE_LIST_LEN + 3 + 4 + COMPLEX_LIST_LEN)
         sll = lists.SinglyLinkedList()
-        sll.add('haha', iterable=True)
+        sll.add('haha', iterate=True)
         assert len(sll) == 4
 
     def test_can_create_new_sll_from_different_types(self, sll_simple):
@@ -105,7 +105,7 @@ class TestSinglyLinkedList:
 
     def test_raise_errors(self, sll_simple):
         with pytest.raises(TypeError):
-            sll_simple.add(1, iterable=True)
+            sll_simple.add(1, iterate=True)
 
         # sll = lists.SinglyLinkedList()
         # with pytest.raises(ValueError):
@@ -135,11 +135,12 @@ class TestStack:
         stack = lists.SinglyLinkedStack()
         assert stack.is_empty() is True
         assert repr(stack) == 'SinglyLinkedStack(_head=None)'
-        assert str(stack) == 'SinglyLinkedStack(_head=None)'
+        assert str(stack) == 'SinglyLinkedStack()'
 
         # Push a string element
         stack.push('new_element')
         assert len(stack) == 1
+        assert str(stack) == "SinglyLinkedStack(_head=ListNode(val='new_element', next=None))"
         assert stack.is_empty() is False
 
         # Push a frozenset element
@@ -160,13 +161,13 @@ class TestStack:
         stack.push(None)
         assert len(stack) == 4
 
-        stack.push([1, 2, 3], iterable=True)
+        stack.push([1, 2, 3], iterate=True)
         assert len(stack) == 7
 
     def test_raise_errors(self):
         stack = lists.SinglyLinkedStack([1, 2, 3])
         with pytest.raises(TypeError):
-            stack.push(1, iterable=True)
+            stack.push(1, iterate=True)
 
     def test_pop_and_top(self):
         stack = lists.SinglyLinkedStack([1, 2, 3])
@@ -187,10 +188,11 @@ class TestQueue:
         queue = lists.Queue()
         assert queue.is_empty() is True
         assert repr(queue) == 'Queue(_head=None)'
-        assert str(queue) == 'Queue(_head=None)'
+        assert str(queue) == 'Queue()'
 
         queue = lists.Queue(2)
         assert len(queue) == 1
+        assert str(queue) == 'Queue(_head=ListNode(val=2, next=None))'
         assert queue.is_empty() is False
 
         queue = lists.Queue([1, 2, 3])
@@ -212,7 +214,7 @@ class TestQueue:
         assert len(queue) == 2
 
         # Push an element with val=[1,2,3]
-        queue.enqueue([1, 2, 3], iterable=True)
+        queue.enqueue([1, 2, 3], iterate=True)
         assert len(queue) == 5
 
     def test_dequeue(self):
@@ -224,6 +226,13 @@ class TestQueue:
         with pytest.raises(IndexError):
             assert queue.dequeue()
 
+        assert str(queue) == 'Queue()'
+
+        queue.enqueue('4')
+        assert len(queue) == 1
+        assert queue.is_empty() is False
+        assert str(queue) == "Queue(_head=ListNode(val='4', next=None))"
+
     def test_raise_errors(self):
         queue = lists.Queue()
         with pytest.raises(IndexError):
@@ -231,7 +240,7 @@ class TestQueue:
         with pytest.raises(IndexError):
             queue.last()
         with pytest.raises(TypeError):
-            queue.enqueue(1, iterable=True)
+            queue.enqueue(1, iterate=True)
 
 
 class TestCircularyLinkedList:
@@ -239,10 +248,11 @@ class TestCircularyLinkedList:
         circulary = lists.CircularlyLinkedList()
         assert circulary.is_empty() is True
         assert repr(circulary) == 'CircularlyLinkedList(_tail=None)'
-        assert str(circulary) == 'CircularlyLinkedList(_tail=None)'
+        assert str(circulary) == 'CircularlyLinkedList()'
 
         circulary = lists.CircularlyLinkedList(2)
         assert len(circulary) == 1
+        assert str(circulary) == 'CircularlyLinkedList(_tail=ListNode(val=2, next=...))'
         assert circulary.is_empty() is False
 
         circulary = lists.CircularlyLinkedList([1, 2, 3])
@@ -264,7 +274,7 @@ class TestCircularyLinkedList:
         assert len(circulary) == 2
 
         # Push an element with val=[1,2,3]
-        circulary.enqueue([1, 2, 3], iterable=True)
+        circulary.enqueue([1, 2, 3], iterate=True)
         assert len(circulary) == 5
 
     def test_dequeue(self):
@@ -283,4 +293,57 @@ class TestCircularyLinkedList:
         with pytest.raises(IndexError):
             queue.last()
         with pytest.raises(TypeError):
-            queue.enqueue(1, iterable=True)
+            queue.enqueue(1, iterate=True)
+
+
+class TestLinkedDeque:
+    def test_create_and_insert(self):
+        deque = lists.LinkedDeque()
+        assert deque.is_empty() is True
+        assert repr(deque) == ('LinkedDeque(_header=DoubleListNode(val=None, '
+                               'next=DoubleListNode(val=None, next=None, '
+                               'prev=...), prev=None), _trailer=DoubleListNode('
+                               'val=None, next=None, prev=DoubleListNode('
+                               'val=None, next=..., prev=None)))')
+        assert str(deque) == 'LinkedDeque()'
+
+        deque = lists.LinkedDeque(2)
+        assert len(deque) == 1
+        assert str(deque) == ('LinkedDeque(_header=DoubleListNode(val=None, '
+                              'next=DoubleListNode(val=2, next=DoubleListNode('
+                              'val=None, next=None, prev=...), prev=...), '
+                              'prev=None), _trailer=DoubleListNode(val=None, '
+                              'next=None, prev=DoubleListNode(val=2, next=..., '
+                              'prev=DoubleListNode(val=None, next=..., prev=None))))')
+        assert deque.is_empty() is False
+
+        deque = lists.LinkedDeque([1, 2, 3])
+        assert len(deque) == 3
+        assert deque.is_empty() is False
+        assert deque.first() == 1
+        assert deque.last() == 3
+
+        deque.insert_front(10)
+        assert deque.first() == 10
+        assert len(deque) == 4
+
+    def test_delete(self):
+        circulary = lists.LinkedDeque([1, 2, 3])
+
+        assert circulary.pop_front() == 1
+        assert circulary.pop_back() == 3
+        assert circulary.pop_front() == 2
+
+    def test_raise_errors(self):
+        circulary = lists.LinkedDeque()
+
+        with pytest.raises(IndexError):
+            circulary.pop_front()
+        with pytest.raises(IndexError):
+            circulary.first()
+        with pytest.raises(IndexError):
+            circulary.last()
+        with pytest.raises(IndexError):
+            circulary.delete_back()
+        with pytest.raises(IndexError):
+            circulary.delete_front()
