@@ -1,0 +1,46 @@
+name: Tagger
+
+on:
+  schedule:
+    - cron: '00 23 * * 0' # At 23:00 on Sunday
+  workflow_dispatch:
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+        - name: first-step
+          run: echo "hello world"
+        
+        - name: checkout-repo-content
+          uses: actions/checkout@v2 # checkout the repository content to github runner
+      
+        - name: git-config
+          run: |
+            # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+            git --version
+            git config user.name "GitHub Actions Bot"
+            git config user.email "<>"
+            # git status
+            # git tag
+            # git describe
+  
+        - name: create-tag-decision
+          run: |
+            git fetch
+            git checkout main
+            git pull
+            # git_cmd=$(git diff --quiet dev main)
+            
+            if ! git diff --quiet dev main
+            then
+              git rebase -Xours dev
+              timestamp=$(date +%Y%m%d)
+              git tag "oops_$timestamp"
+              # git remote set-url origin https://andrew31415:${{secrets.GITHUB_TOKEN}}@github.com/andrew31415/oops.git
+              git push --force
+              git push --tags --force
+              echo "Pushed tag oops_$timestamp on main branch!"
+            else
+              echo "No new commits this week!"
+            fi
