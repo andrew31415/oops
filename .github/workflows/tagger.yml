@@ -11,3 +11,35 @@ jobs:
     steps:
         - name: first-step
           run: echo "hello world"
+        
+        - name: checkout-repo-content
+          uses: actions/checkout@v2 # checkout the repository content to github runner
+      
+        - name: git-config
+          run: |
+            # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+            git --version
+            git config user.name "GitHub Actions Bot"
+            git config user.email "<>"
+            git status
+            git tag
+            git describe
+  
+        - name: create-tag-decision
+          run: |
+            git fetch
+            git checkout main
+            git pull
+            git_cmd=$(git diff --quiet dev main)
+            
+            if ! $git_cmd
+            then
+              git rebase dev
+              timestamp = $(date +%Y%m%d)
+              git tag "oops_$timestamp"
+              git push
+              git push --tags
+              echo "Pushed tag $timestamp on main branch!"
+            else
+              echo "No new commits this week!"
+            fi
