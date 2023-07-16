@@ -151,14 +151,14 @@ class TestSinglyLinkedList:
         sll_simple.add([5, 6, 7], iterable=True)
         assert sll_simple._size == (SIMPLE_LIST_LEN + 3)
 
-        sll_simple.add('test', iterable=True)
+        sll_simple.add('test', iterate=True)
         assert sll_simple._size == (SIMPLE_LIST_LEN + 3 + 4)
 
-        sll_simple.add(sll_complex, iterable=True)
+        sll_simple.add(sll_complex, iterate=True)
         assert sll_simple._size == (
             SIMPLE_LIST_LEN + 3 + 4 + COMPLEX_LIST_LEN)
         sll = lists.SinglyLinkedList()
-        sll.add('haha', iterable=True)
+        sll.add('haha', iterate=True)
         assert len(sll) == 4
 
     def test_can_create_new_sll_from_different_types(self, sll_simple):
@@ -186,7 +186,7 @@ class TestSinglyLinkedList:
 
     def test_raise_errors(self, sll_simple):
         with pytest.raises(TypeError):
-            sll_simple.add(1, iterable=True)
+            sll_simple.add(1, iterate=True)
 
         # sll = lists.SinglyLinkedList()
         # with pytest.raises(ValueError):
