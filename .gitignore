@@ -3,6 +3,6 @@
 .tox
 
 .tox
-*.pyc
+*.pyc*
 html*
 *oops.egg-info

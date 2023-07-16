@@ -36,7 +36,7 @@ jobs:
             then
               git rebase -Xours dev
               timestamp=$(date +%Y%m%d)
-              git tag "oops_$timestamp"
+              git tag -a "oops_$timestamp" -m "OOPS for week $(date -dlast-monday +%Y%m%d)-$timestamp"
               # git remote set-url origin https://andrew31415:${{secrets.GITHUB_TOKEN}}@github.com/andrew31415/oops.git
               git push --force
               git push --tags --force
